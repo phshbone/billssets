@@ -1,53 +1,331 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Band Setlist Player</title>
-    <style>
-        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; }
-        .list-container { max-width: 500px; margin: auto; }
-        .song-btn { 
-            display: block; width: 100%; padding: 15px; margin: 10px 0; 
-            background: #282828; border: none; color: white; 
-            text-align: left; font-size: 18px; border-radius: 8px; cursor: pointer;
-        }
-        .song-btn:hover { background: #1DB954; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playlist Master – Set 1</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: Arial, sans-serif;
+font-weight: bold;
+background: #1a1f2e;
+color: #e8eaf0;
+min-height: 100vh;
+padding: 16px;
+}
+
+.container {
+max-width: 520px;
+margin: 0 auto;
+}
+
+header {
+text-align: center;
+padding: 20px 0 16px;
+border-bottom: 2px solid #4A90E2;
+margin-bottom: 20px;
+}
+
+header h1 {
+font-size: 1.6rem;
+color: #4A90E2;
+letter-spacing: 2px;
+text-transform: uppercase;
+}
+
+header p {
+font-size: 0.75rem;
+color: #7a8aaa;
+margin-top: 4px;
+font-weight: normal;
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+
+/* ADD SONG FORM */
+.add-form {
+background: #232840;
+border: 1px solid #2e3655;
+border-radius: 10px;
+padding: 14px;
+margin-bottom: 20px;
+}
+
+.add-form h2 {
+font-size: 0.75rem;
+color: #4A90E2;
+letter-spacing: 1px;
+text-transform: uppercase;
+margin-bottom: 10px;
+}
+
+.add-form input {
+width: 100%;
+padding: 10px 12px;
+margin-bottom: 8px;
+background: #1a1f2e;
+border: 1px solid #3a4570;
+border-radius: 6px;
+color: #e8eaf0;
+font-family: Arial, sans-serif;
+font-size: 0.9rem;
+}
+
+.add-form input::placeholder { color: #4a5570; font-weight: normal; }
+.add-form input:focus { outline: none; border-color: #4A90E2; }
+
+.add-form button {
+width: 100%;
+padding: 11px;
+background: #4A90E2;
+color: white;
+border: none;
+border-radius: 6px;
+font-family: Arial, sans-serif;
+font-weight: bold;
+font-size: 0.9rem;
+cursor: pointer;
+letter-spacing: 0.5px;
+transition: background 0.2s;
+}
+
+.add-form button:hover { background: #3a7fd2; }
+
+/* SETLIST */
+.setlist-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+}
+
+.setlist-header h2 {
+font-size: 0.75rem;
+color: #4A90E2;
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+
+.song-count {
+font-size: 0.7rem;
+color: #7a8aaa;
+font-weight: normal;
+}
+
+/* SONG CARD */
+.song-item {
+display: flex;
+align-items: center;
+background: #232840;
+border: 1px solid #2e3655;
+border-radius: 10px;
+padding: 12px 14px;
+margin-bottom: 8px;
+transition: border-color 0.2s;
+}
+
+.song-item:hover { border-color: #4A90E2; }
+
+.song-number {
+font-size: 0.7rem;
+color: #4A90E2;
+min-width: 24px;
+font-weight: bold;
+}
+
+.song-info {
+flex-grow: 1;
+cursor: pointer;
+padding: 0 8px;
+}
+
+.song-title {
+font-size: 0.95rem;
+color: #e8eaf0;
+display: block;
+line-height: 1.3;
+}
+
+.song-artist {
+font-size: 0.72rem;
+color: #7a8aaa;
+font-weight: normal;
+margin-top: 2px;
+}
+
+.play-icon {
+font-size: 1rem;
+color: #4A90E2;
+margin-right: 6px;
+opacity: 0;
+transition: opacity 0.2s;
+}
+
+.song-item:hover .play-icon { opacity: 1; }
+
+.del-btn {
+background: transparent;
+border: 1px solid #3a4570;
+color: #7a8aaa;
+border-radius: 5px;
+width: 28px;
+height: 28px;
+cursor: pointer;
+font-size: 0.8rem;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+transition: all 0.2s;
+}
+
+.del-btn:hover { border-color: #e74c3c; color: #e74c3c; background: #2a1520; }
+
+.empty-state {
+text-align: center;
+padding: 40px 20px;
+color: #4a5570;
+font-weight: normal;
+}
+
+.empty-state span { font-size: 2rem; display: block; margin-bottom: 8px; }
+</style>
 </head>
 <body>
-    <div class="list-container">
-        <h1>Set 1 Playlist</h1>
-        <div id="playlist"></div>
-    </div>
+<div class="container">
 
-    <script>
-        const setlist = [
-            { title: "Dim Lights, Thick Smoke", url: "https://www.youtube.com/watch?v=FqS73qM4P88" },
-            { title: "As Good As I Once Was", url: "https://www.youtube.com/watch?v=i9OLKSOmZwA" },
-            { title: "Two More Bottles Of Wine", url: "https://www.youtube.com/watch?v=D001Jt2G5W8" },
-            { title: "Blame it on Your Heart", url: "https://www.youtube.com/watch?v=k5_d2yqZ_lE" },
-            { title: "Every Little Thing", url: "https://www.youtube.com/watch?v=bPPNPhJSb5Y" },
-            { title: "Working Man Blues", url: "https://www.youtube.com/watch?v=q6j7tHh311c" },
-            { title: "She's In Love With The Boy", url: "https://www.youtube.com/watch?v=W55yJ8n7M-Y" },
-            { title: "Six Days On The Road", url: "https://www.youtube.com/watch?v=q7a8qQhE_5s" },
-            { title: "She's Crazy for Leavin'", url: "https://www.youtube.com/watch?v=Sz_7G8fOyG8" },
-            { title: "Good Hearted Woman", url: "https://www.youtube.com/watch?v=aKw834trRWo" },
-            { title: "Tennessee Whiskey", url: "https://www.youtube.com/watch?v=4zAThXBR_rY" },
-            { title: "One More Last Chance", url: "https://www.youtube.com/watch?v=aGfgIQfpbWI" },
-            { title: "Suds In The Bucket", url: "https://www.youtube.com/watch?v=qE4c4X67Y_c" },
-            { title: "I Never Lie", url: "https://www.youtube.com/watch?v=Gk3wR8z1h4g" },
-            { title: "I Try To Think About Elvis", url: "https://www.youtube.com/watch?v=inDsXwyyr4Y" }
-        ];
+<header>
+<h1>🎵 Playlist Master</h1>
+<p>Set 1 — Band Setlist</p>
+</header>
 
-        const container = document.getElementById('playlist');
-        setlist.forEach(song => {
-            const btn = document.createElement('button');
-            btn.className = 'song-btn';
-            btn.innerText = song.title;
-            btn.onclick = () => window.open(song.url, '_blank');
-            container.appendChild(btn);
-        });
-    </script>
+<div class="add-form">
+<h2>+ Add a Song</h2>
+<input type="text" id="titleInput" placeholder="Song Title – Artist">
+<input type="url" id="urlInput" placeholder="YouTube or SoundCloud URL">
+<button onclick="addSong()">Add to Setlist</button>
+</div>
+
+<div class="setlist-header">
+<h2>Setlist</h2>
+<span class="song-count" id="songCount"></span>
+</div>
+
+<div id="playlist"></div>
+
+</div>
+
+<script>
+const DEFAULT_SONGS = [
+{ title: "Dim Lights, Thick Smoke", artist: "John Prine & Amanda Shires", url: "https://www.youtube.com/watch?v=GfX63EjWS3o" },
+{ title: "As Good As I Once Was", artist: "Toby Keith", url: "https://www.youtube.com/watch?v=ldQrapQ4d0Y" },
+{ title: "Two More Bottles of Wine", artist: "Emmylou Harris", url: "https://www.youtube.com/watch?v=JHKvvT6IO9M" },
+{ title: "Blame It on Your Heart", artist: "Patty Loveless", url: "https://www.youtube.com/watch?v=5Rq-1VeiDw8" },
+{ title: "Every Little Thing", artist: "Carlene Carter", url: "https://www.youtube.com/watch?v=bPPNPhJSb5Y" },
+{ title: "Workin' Man Blues", artist: "Merle Haggard", url: "https://www.youtube.com/watch?v=fbEstJ98TcM" },
+{ title: "She's in Love with the Boy", artist: "Trisha Yearwood", url: "https://www.youtube.com/watch?v=mUFObCZtGWQ" },
+{ title: "Six Days on the Road", artist: "Dave Dudley", url: "https://www.youtube.com/watch?v=rGmw44_ZsPw" },
+{ title: "She's Crazy for Leavin'", artist: "Rodney Crowell", url: "https://www.youtube.com/watch?v=YOUV692Pe_Y" },
+{ title: "Good Hearted Woman", artist: "Waylon Jennings & Willie Nelson", url: "https://www.youtube.com/watch?v=swRJeMsk21g" },
+{ title: "Tennessee Whiskey", artist: "Chris Stapleton", url: "https://www.youtube.com/watch?v=4zAThXFOy2c" },
+{ title: "One More Last Chance", artist: "Vince Gill", url: "https://www.youtube.com/watch?v=aGfgIQfpbWI" },
+{ title: "Suds in the Bucket", artist: "Sara Evans", url: "https://www.youtube.com/watch?v=06o-EYH9svs" },
+{ title: "I Never Lie", artist: "Zach Top", url: "https://www.youtube.com/watch?v=gd7i0fF-GZY" },
+{ title: "I Try to Think About Elvis", artist: "Patty Loveless", url: "https://www.youtube.com/watch?v=Hx0kPNEIY1M" },
+];
+
+// Load from localStorage or fall back to defaults
+let songs = JSON.parse(localStorage.getItem('playlistMaster_v2')) || DEFAULT_SONGS;
+
+function save() {
+localStorage.setItem('playlistMaster_v2', JSON.stringify(songs));
+}
+
+function render() {
+const list = document.getElementById('playlist');
+const countEl = document.getElementById('songCount');
+list.innerHTML = '';
+countEl.textContent = songs.length + ' song' + (songs.length !== 1 ? 's' : '');
+
+if (songs.length === 0) {
+list.innerHTML = '<div class="empty-state"><span>🎸</span>No songs yet. Add one above!</div>';
+return;
+}
+
+songs.forEach((s, i) => {
+const div = document.createElement('div');
+div.className = 'song-item';
+div.innerHTML = `
+<span class="song-number">${String(i + 1).padStart(2, '0')}</span>
+<div class="song-info" onclick="openSong('${escapeUrl(s.url)}')">
+<span class="song-title">${escapeHtml(s.title)}</span>
+<span class="song-artist">${escapeHtml(s.artist || '')}</span>
+</div>
+<span class="play-icon">▶</span>
+<button class="del-btn" onclick="deleteSong(${i})" title="Remove">✕</button>
+`;
+list.appendChild(div);
+});
+}
+
+function openSong(url) {
+window.open(url, '_blank');
+}
+
+function addSong() {
+const titleEl = document.getElementById('titleInput');
+const urlEl = document.getElementById('urlInput');
+const title = titleEl.value.trim();
+const url = urlEl.value.trim();
+
+if (!title || !url) return;
+
+// Split "Title – Artist" if entered that way
+let songTitle = title, artist = '';
+const dash = title.indexOf(' – ');
+const hyphen = title.indexOf(' - ');
+const split = dash > -1 ? dash : hyphen;
+if (split > -1) {
+songTitle = title.substring(0, split).trim();
+artist = title.substring(split + 3).trim();
+}
+
+songs.push({ title: songTitle, artist, url });
+save();
+render();
+titleEl.value = '';
+urlEl.value = '';
+titleEl.focus();
+}
+
+function deleteSong(i) {
+songs.splice(i, 1);
+save();
+render();
+}
+
+function escapeHtml(str) {
+return String(str)
+.replace(/&/g, '&amp;')
+.replace(/</g, '&lt;')
+.replace(/>/g, '&gt;')
+.replace(/"/g, '&quot;');
+}
+
+function escapeUrl(url) {
+return url.replace(/'/g, '%27');
+}
+
+// Allow Enter key in inputs
+document.addEventListener('DOMContentLoaded', () => {
+document.getElementById('urlInput').addEventListener('keydown', e => {
+if (e.key === 'Enter') addSong();
+});
+});
+
+render();
+</script>
 </body>
 </html>
